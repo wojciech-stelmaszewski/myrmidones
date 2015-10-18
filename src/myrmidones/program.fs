@@ -56,12 +56,22 @@ let rec drawTreeInner (graphics:Graphics) (pen:Pen) (start:Point) (length:float)
 
 //drawLSystem "E" 0 3 (new Point(0,0)) 10.0 0.0
 
+let randomizer = new Random()
+
+let random_element (elements: 'a list) =
+    elements.Item(randomizer.Next(elements.Length))
+
+
 let productions (symbol: char) =
     match symbol with
-        | 'F' -> "FF"
+        | 'F' ->
+            ["F[+F]F[-F]F"; "F[+F]F"; "F[-F]F"] |> random_element
+        //////////////| 'F' -> "FF"
         //| 'E' -> "F[E]E"
         //| 'E' -> "F+[E]--[E]"
-        | 'E' -> "F-[[E]+E]+F[+FE]-E"
+        ////////| 'E' -> "F-[[E]+E]+F[+FE]-E"
+        //////////////| 'E' -> 
+        //////////////    ["F-[[E]+E]+F[+FE]-E"; "F[+E]F[-E]+E"; "F[E]F[-E]E"] |> random_element
         //| 'E' -> "F-[[E]+E]+F[+FE]-E"
         //////| 'E' -> "F[+E]F[-E]+E"
         //| 'E' -> "F[+E]F[-E]+E"
@@ -92,7 +102,7 @@ let rec drawLSystem (graphics:Graphics) (pen:Pen) (lsystem: string) (start: Poin
             let angle_diff = 20.0 * Math.PI / 180.0
 
             let new_conf = match head with
-            | '[' -> (start, angle, new Pen(Color.WhiteSmoke, pen.Width*0.8f))
+            | '[' -> (start, angle, new Pen(Color.WhiteSmoke, pen.Width*1.0f))
                 | ']' -> stack.Head
                 | '+' -> (start, angle + angle_diff, pen)
                 | '-' -> (start, angle - angle_diff, pen)
@@ -168,14 +178,14 @@ let main argv =
     pictureBox.Image <- bitmap;
     form.Controls.Add(pictureBox);
 
-    let pen = new Pen(Color.WhiteSmoke, (single)10)
+    let pen = new Pen(Color.WhiteSmoke, (single)1)
 
     let draw = graphics |> drawTree
     let start_point = new Point(window_width/2, window_height-50)
 
     //draw pen start_point
 
-    drawLSystem graphics pen (LSystem "E" 0 5) start_point 9.0 0.0 []
+    drawLSystem graphics pen (LSystem "F" 0 5) start_point 9.0 0.0 []
 
     Application.Run(form);
 
